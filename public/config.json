@@ -1,0 +1,19 @@
+{
+  "CONTRACT_ADDRESS": "0xd3304ae95F09B605a8B1888cC995C13f436491f3",
+  "SCAN_LINK": "https://mumbai.polygonscan.com/verifyContract-solc?a=0xd81464c1318a7edfb63af4e65251cfddc5ee34b8&c=v0.8.7%2bcommit.e28d00a7&lictype=5",
+  "NETWORK": {
+    "NAME": "maticmum",
+    "SYMBOL": "Matic",
+    "ID": 80001
+  },
+  "NFT_NAME": "Little Luna Fisrt Puzzle",
+  "SYMBOL": "LiLu1",
+  "MAX_SUPPLY": 501,
+  "WEI_COST": 50000000000000000,
+  "DISPLAY_COST": 0.05,
+  "GAS_LIMIT": 285000,
+  "MARKETPLACE": "OpenSea",
+  "MARKETPLACE_LINK": "https://testnets.opensea.io/collection/little-luna-fisrt-puzzle-v3",
+  "SHOW_BACKGROUND": true,
+  "MAX_MINTING_VALUE":20
+}
