@@ -6,7 +6,8 @@ import { useForm } from "react-hook-form";
 
 const api =
   //"https://74zkcr4wuj.execute-api.eu-central-1.amazonaws.com/default/";
-  `http://localhost:3001/`;
+  //`http://localhost:3001/`;
+  "https://alice.mypapp.live/";
 
 const gateWay = "https://infura-ipfs.io/ipfs/";
 
