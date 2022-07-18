@@ -1,13 +1,32 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import Gallery from "./routes/Gallery";
+import Mint from "./routes/Mint";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ResponsiveAppBar from "./NavBar";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/" element={<App />} />
+        <Route exact path="gallery" element={<Gallery />} />
+        <Route exact path="mint/" element={<App />} />
+
+        <Route exact path="/mint/:ipfs" element={<Mint />} />
+        <Route
+          path="/blog/:slug"
+          element={({ match }) => {
+            console.log(match);
+            return <div />;
+          }}
+        />
+      </Routes>
+    </BrowserRouter>{" "}
   </React.StrictMode>
 );
 
