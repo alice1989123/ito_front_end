@@ -11,6 +11,8 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import LoadingButton from "@mui/lab/LoadingButton";
 import IconButton from "@mui/material/IconButton";
+import { Box } from "@mui/system";
+import { TextField } from "@mui/material";
 
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -106,7 +108,6 @@ const Mint = () => {
       const provider = new ethers.providers.Web3Provider(ethereum);
 
       try {
-        const accounts = await provider.send("eth_requestAccounts", []);
         const networkId = await ethereum.request({
           method: "net_version",
         });
@@ -117,11 +118,7 @@ const Mint = () => {
           //console.log("test");
 
           const signer = await provider.getSigner();
-          const Mintcontract1 = new ethers.Contract(
-            artist.contract,
-            new ethers.utils.Interface(abi),
-            signer
-          );
+
           setConnectionError("");
           try {
             setLoading(true);
@@ -174,76 +171,83 @@ const Mint = () => {
         {!isLoading && (
           <div>
             {metadataValues && (
-              <>
-                Client Address
-                <input onChange={(e) => handleChangeClient(e)} />
-                <button onClick={(e) => handleMint(e)}> Mint </button>
-              </>
-            )}
-            <Card sx={{ maxWidth: 345, margin: 2 }}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  Preview of the NFT{" "}
-                </Typography>
+              <Card sx={{ maxWidth: 345, margin: 2 }}>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    Preview of the NFT{" "}
+                  </Typography>
 
-                <Typography variant="body2" color="text.secondary">
-                  This are the final image and metadata of your NFT, once you
-                  click mint and send it will be stored in the Blockchain
-                  forever.
-                </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    This are the final image and metadata of your NFT, once you
+                    click mint and send it will be stored in the Blockchain
+                    forever.
+                  </Typography>
 
-                <CardMedia
-                  component="img"
-                  alt="NFT Image"
-                  height="200"
-                  src={gateWay + metadataValues?.image.split("ipfs://")[1]}
-                  image={gateWay + metadataValues?.image.split("ipfs://")[1]}
-                />
-                <Typography gutterBottom variant="h7" component="span">
-                  Name
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {metadataValues?.name}
-                </Typography>
-                <Typography gutterBottom variant="h7" component="div">
-                  Description{" "}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {metadataValues?.description}
-                </Typography>
+                  <CardMedia
+                    component="img"
+                    alt="NFT Image"
+                    height="200"
+                    src={gateWay + metadataValues?.image.split("ipfs://")[1]}
+                    image={gateWay + metadataValues?.image.split("ipfs://")[1]}
+                  />
+                  <Typography gutterBottom variant="h7" component="span">
+                    Name
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {metadataValues?.name}
+                  </Typography>
+                  <Typography gutterBottom variant="h7" component="div">
+                    Description{" "}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {metadataValues?.description}
+                  </Typography>
 
-                <Typography gutterBottom variant="h7" component="div">
-                  Attributes{" "}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {metadataValues?.attributes?.map((x) => (
-                    <div>
+                  <Typography gutterBottom variant="h7" component="div">
+                    Attributes{" "}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {metadataValues?.attributes?.map((x) => (
                       <div>
-                        {" "}
-                        {x?.trait_type} : {x?.value}{" "}
+                        <div>
+                          {" "}
+                          {x?.trait_type} : {x?.value}{" "}
+                        </div>
                       </div>
-                    </div>
-                  ))}{" "}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <LoadingButton
-                  type="submit"
-                  variant="contained"
-                  color="secondary"
-                >
-                  Mint
-                </LoadingButton>{" "}
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                >
-                  {" "}
-                  <input hidden accept="image/*" type="file" />
-                </IconButton>
-              </CardActions>
-            </Card>
+                    ))}{" "}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  Client Address
+                  <Box className={{ display: "flex" }}>
+                    <TextField
+                      onChange={handleChangeClient}
+                      required
+                      margin="normal"
+                      id="outlined-required"
+                      label="Client Address"
+                      size="small"
+                    />{" "}
+                  </Box>
+                  <LoadingButton
+                    onClick={(e) => handleMint(e)}
+                    type="submit"
+                    variant="contained"
+                    color="secondary"
+                  >
+                    Mint
+                  </LoadingButton>{" "}
+                  <IconButton
+                    color="primary"
+                    aria-label="upload picture"
+                    component="label"
+                  >
+                    {" "}
+                    <input hidden accept="image/*" type="file" />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            )}
           </div>
         )}
       </LoadingOverlay>
