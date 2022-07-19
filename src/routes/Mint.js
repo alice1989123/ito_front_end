@@ -7,6 +7,14 @@ import { ethers } from "ethers";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingOverlay from "react-loading-overlay";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import LoadingButton from "@mui/lab/LoadingButton";
+import IconButton from "@mui/material/IconButton";
+
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
 
 const Mint = () => {
   const [CONFIG, SET_CONFIG] = useState({
@@ -167,32 +175,75 @@ const Mint = () => {
           <div>
             {metadataValues && (
               <>
-                <h3> Preview </h3>
-                <h4> Name </h4>
-                <div>{metadataValues?.name}</div>
-                <h4> Description </h4>
-                <div>{metadataValues?.description}</div>
-                <h4> Image </h4>{" "}
-                {metadataValues?.image && (
-                  <img
-                    width={400}
-                    src={gateWay + metadataValues?.image.split("ipfs://")[1]}
-                  ></img>
-                )}
-                <h4> Attributes </h4>
-                {metadataValues?.attributes?.map((x) => (
-                  <div>
-                    <div>
-                      {" "}
-                      {x?.trait_type} : {x?.value}{" "}
-                    </div>
-                  </div>
-                ))}
                 Client Address
                 <input onChange={(e) => handleChangeClient(e)} />
                 <button onClick={(e) => handleMint(e)}> Mint </button>
               </>
             )}
+            <Card sx={{ maxWidth: 345, margin: 2 }}>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Preview of the NFT{" "}
+                </Typography>
+
+                <Typography variant="body2" color="text.secondary">
+                  This are the final image and metadata of your NFT, once you
+                  click mint and send it will be stored in the Blockchain
+                  forever.
+                </Typography>
+
+                <CardMedia
+                  component="img"
+                  alt="NFT Image"
+                  height="200"
+                  src={gateWay + metadataValues?.image.split("ipfs://")[1]}
+                  image={gateWay + metadataValues?.image.split("ipfs://")[1]}
+                />
+                <Typography gutterBottom variant="h7" component="span">
+                  Name
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {metadataValues?.name}
+                </Typography>
+                <Typography gutterBottom variant="h7" component="div">
+                  Description{" "}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {metadataValues?.description}
+                </Typography>
+
+                <Typography gutterBottom variant="h7" component="div">
+                  Attributes{" "}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {metadataValues?.attributes?.map((x) => (
+                    <div>
+                      <div>
+                        {" "}
+                        {x?.trait_type} : {x?.value}{" "}
+                      </div>
+                    </div>
+                  ))}{" "}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <LoadingButton
+                  type="submit"
+                  variant="contained"
+                  color="secondary"
+                >
+                  Mint
+                </LoadingButton>{" "}
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="label"
+                >
+                  {" "}
+                  <input hidden accept="image/*" type="file" />
+                </IconButton>
+              </CardActions>
+            </Card>
           </div>
         )}
       </LoadingOverlay>

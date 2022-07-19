@@ -7,14 +7,18 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import { LoadingButton } from "@mui/lab";
 
 import axios from "axios";
 import { api, gateWay } from "../constants";
 import { useForm } from "react-hook-form";
 import { margin } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 export default function MetadataLoader({ setmetadata, ipfs }) {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -32,6 +36,7 @@ export default function MetadataLoader({ setmetadata, ipfs }) {
       attributes: inputList,
     };
     registerMetadata(metadata_);
+    setLoading(true);
   };
 
   const registerMetadata = async (metadata_, artist) => {
@@ -44,6 +49,7 @@ export default function MetadataLoader({ setmetadata, ipfs }) {
       data: metadata_,
     };
     const hash = await axios(req);
+    setLoading(false);
     navigate(`/mint/${hash.data}`, { state: { artist: artist } });
 
     setmetadata(hash.data);
@@ -52,7 +58,11 @@ export default function MetadataLoader({ setmetadata, ipfs }) {
     return hash.data;
   };
 
-  const [inputList, setInputList] = useState([]);
+  const [inputList, setInputList] = useState([
+    { trait_type: "Style", value: "" },
+    { trait_type: "Collection", value: "" },
+    { trait_type: "Studio", value: "" },
+  ]);
 
   function removeInput(e, index) {
     e.preventDefault();
@@ -110,7 +120,6 @@ export default function MetadataLoader({ setmetadata, ipfs }) {
             margin="normal"
             id="outlined-required"
             label="Name"
-            defaultValue="Name"
             size="small"
           />{" "}
           <TextField
@@ -119,49 +128,96 @@ export default function MetadataLoader({ setmetadata, ipfs }) {
             margin="normal"
             id="outlined-required"
             label="Description"
-            defaultValue="Description"
             size="small"
             /*             style={{ height: 15 }}
              */
           />
           {errors.exampleRequired && <span>This field is required</span>}
+          <Typography
+            sx={{ width: "100%", textAlign: "center", marginTop: "10px" }}
+            gutterBottom
+            variant="h5"
+            component="div"
+          >
+            Additional Atributes
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Some times you might need additional inputs that makes your NFT even
+            more unique, feel free to use your imagination!
+          </Typography>
           {inputList.map((x, i) => {
             return (
               <Box>
-                <Box>
-                  <TextField
-                    onChange={(e) => HandleKeyChange(e, i)}
-                    margin="normal"
-                    id="outlined-required"
-                    label="Atribute Name"
-                    size="small"
-                  />
-                </Box>
-                <TextField
-                  onChange={(e) => HandleValueChange(e, i)}
-                  margin="normal"
-                  id="outlined-required"
-                  label="Atribute Value"
-                  size="small"
-                />
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box margin={1}>
+                    <TextField
+                      onChange={(e) => HandleKeyChange(e, i)}
+                      margin="normal"
+                      id="outlined-required"
+                      label={"Atribute Name"}
+                      size="small"
+                      defaultValue={x.trait_type}
+                    />
+                  </Box>
 
-                <button
-                  onClick={(e) => {
-                    removeInput(e, i);
-                  }}
-                >
-                  Remove
-                </button>
+                  <Box margin={1}>
+                    <TextField
+                      onChange={(e) => HandleValueChange(e, i)}
+                      margin="normal"
+                      id="outlined-required"
+                      label="Atribute Value"
+                      size="small"
+                      defaultValue={""}
+                    />
+                  </Box>
+
+                  <Button
+                    sx={{ height: "50px", height: "50px", borderRadius: 3 }}
+                    color="error"
+                    onClick={(e) => {
+                      removeInput(e, i);
+                    }}
+                  >
+                    <RemoveCircleOutlineIcon color="action" />
+                  </Button>
+                </Box>
               </Box>
             );
           })}
-          <Box>
-            <Typography gutterBottom variant="h7" component="div">
-              Add aditional atributes{" "}
-            </Typography>
-            <button onClick={addInput}>Add Atribute</button>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              <Button
+                sx={{ height: "50px", height: "50px", borderRadius: 3 }}
+                onClick={addInput}
+              >
+                {" "}
+                <Typography gutterBottom variant="h8" component="div">
+                  Add Atribute{" "}
+                </Typography>
+                <AddCircleOutlineIcon margin="normal"></AddCircleOutlineIcon>
+              </Button>
+            </Box>
+            <LoadingButton
+              onClick={handleSubmit(onSubmit)}
+              loading={loading}
+              type="submit"
+              variant="contained"
+              color="success"
+              sx={{ maxHeight: "38px" }}
+            >
+              Submit
+            </LoadingButton>{" "}
           </Box>
-          <input type="submit" />
         </Box>
       </CardActions>
     </Card>
