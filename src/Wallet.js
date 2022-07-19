@@ -33,9 +33,19 @@ const LoggIn = ({ artist, setArtist }) => {
 
   const contracts = [
     {
-      artist: "Andres",
+      artist: "Alicia",
       address: "0x9282396A80076D8f5a2FC3744b510D99BB524b1b",
       contract: "0xd3304ae95F09B605a8B1888cC995C13f436491f3",
+    },
+    {
+      artist: "Jaime",
+      address: "0xD9200de30243C294F193fC6f3F91634fA018F2d4",
+      contract: "0x88db134051ce3dfcf1b8544004c214175ce37aef",
+    },
+    {
+      artist: "Andress",
+      address: "0x0cBA69c8AF39cA43793A42a3221509323f9f5707",
+      contract: "0x4c364A276E5E8161978d7BB338B1Bdf610C2066c",
     },
   ];
 
