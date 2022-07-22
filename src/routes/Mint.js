@@ -13,10 +13,12 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import IconButton from "@mui/material/IconButton";
 import { Box } from "@mui/system";
 import { TextField } from "@mui/material";
+import "react-toastify/dist/ReactToastify.css";
 
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
+import { BorderRightRounded } from "@mui/icons-material";
 
 const Mint = () => {
   const [CONFIG, SET_CONFIG] = useState({
@@ -80,8 +82,13 @@ const Mint = () => {
   const [connectionError, setConnectionError] = useState(null);
   function handleMint(e) {
     e.preventDefault();
-    console.log(client);
-    mintNFT(client, ipfs);
+    console.log(client?.contract);
+    if (client?.contract) {
+      mintNFT(client, ipfs);
+    } else {
+      console.log("no contract");
+      toast("Please Loggin, with a validated account", { type: "error" });
+    }
   }
 
   const mintNFT = async (client, metadata) => {
@@ -146,31 +153,47 @@ const Mint = () => {
             console.log("error.... ", e);
           }
         } else {
-          setConnectionError(
-            "Please connect your Wallet to the correct Network"
-          );
+          console.log("Please connect your Wallet to the correct Network");
+          toast("Please connect your Wallet to the correct Network", {
+            type: "error",
+          });
         }
       } catch (e) {
-        setConnectionError(
-          " Something when wrong when trying to mint, please try again later"
+        toast(
+          " Something when wrong when trying to mint, please try again later",
+          {
+            type: "error",
+          }
         );
         console.log(e);
       }
     } else {
-      setConnectionError(" Metmask is not installed, please install metamask");
+      toast("Metamask is not installed, please install metamask", {
+        type: "error",
+      });
     }
   };
   return (
     <>
       <ResponsiveAppBar artist={artist} setArtist={setArtist} />
+      {/*       <ToastContainer />
+       */}
       <LoadingOverlay
         active={isLoading}
         spinner
         text="Loading your NFT final version..."
       >
-        {!isLoading && (
-          <div>
-            {metadataValues && (
+        {
+          <Box
+            sx={{
+              marginTop: "20px",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            {
               <Card sx={{ maxWidth: 345, margin: 2 }}>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
@@ -184,6 +207,7 @@ const Mint = () => {
                   </Typography>
 
                   <CardMedia
+                    sx={{ margin: "4px", borderRadius: "5px" }}
                     component="img"
                     alt="NFT Image"
                     height="200"
@@ -247,9 +271,9 @@ const Mint = () => {
                   </IconButton>
                 </CardActions>
               </Card>
-            )}
-          </div>
-        )}
+            }
+          </Box>
+        }
       </LoadingOverlay>
     </>
   );

@@ -5,12 +5,47 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
+import { toast, ToastContainer } from "react-toastify";
 
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 
 const LoggIn = ({ artist, setArtist }) => {
+  const [CONFIG, SET_CONFIG] = useState({
+    CONTRACT_ADDRESS: "",
+    SCAN_LINK: "",
+    NETWORK: {
+      NAME: "",
+      SYMBOL: "",
+      ID: 0,
+    },
+    NFT_NAME: "",
+    SYMBOL: "",
+    MAX_SUPPLY: 1,
+    WEI_COST: 0,
+    DISPLAY_COST: 0,
+    GAS_LIMIT: 0,
+    MARKETPLACE: "",
+    MARKETPLACE_LINK: "",
+    MAX_MINTING_VALUE: 0,
+  });
+
+  const getConfig = async () => {
+    const configResponse = await fetch("/config.json", {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const config = await configResponse.json();
+    SET_CONFIG(config);
+  };
+
+  useEffect(() => {
+    getConfig();
+  }, []);
+
   const [contract, setContract] = useState(null);
 
   const [account, setAccount] = useState("");
@@ -61,23 +96,31 @@ const LoggIn = ({ artist, setArtist }) => {
     const interface_ = new ethers.utils.Interface(abi);
 
     const metamaskIsInstalled = window.ethereum && window.ethereum.isMetaMask;
+    const { ethereum } = window;
     if (metamaskIsInstalled) {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const accounts = await provider.send("eth_requestAccounts", []);
-
-        const selectedAcounts = contracts.filter((x) => {
-          return x.address.toLowerCase() == accounts[0].toLowerCase();
+        const networkId = await ethereum.request({
+          method: "net_version",
         });
-        if (selectedAcounts.length >= 1) {
-          //console.log(selectedAcounts[0]);
-          setArtist(selectedAcounts[0]);
-          setContract(selectedAcounts[0].contract);
-          localStorage.setItem(
-            "itoAccount",
-            JSON.stringify(selectedAcounts[0])
-          );
-        }
+
+        if (networkId == CONFIG.NETWORK.ID) {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const accounts = await provider.send("eth_requestAccounts", []);
+
+          const selectedAcounts = contracts.filter((x) => {
+            return x.address.toLowerCase() == accounts[0].toLowerCase();
+          });
+          if (selectedAcounts.length >= 1) {
+            //console.log(selectedAcounts[0]);
+            setArtist(selectedAcounts[0]);
+            setContract(selectedAcounts[0].contract);
+            localStorage.setItem(
+              "itoAccount",
+              JSON.stringify(selectedAcounts[0])
+            );
+          }
+        } else
+          toast("Please connect to the correct Network", { type: "error" });
       } catch (e) {
         console.log("error ", e);
       }
@@ -98,6 +141,7 @@ const LoggIn = ({ artist, setArtist }) => {
 
   return (
     <div>
+      <ToastContainer />
       <Box sx={{ flexGrow: 0 }}>
         <Tooltip title="Open settings">
           <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
