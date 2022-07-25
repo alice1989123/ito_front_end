@@ -66,10 +66,18 @@ const Mint = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const values = await axios.get(`${gateWay}` + ipfs);
+      try {
+        const values = await axios.get(`${gateWay}` + ipfs);
 
-      setMetadataValues(values.data);
-      setIsLoading(false);
+        setMetadataValues(values.data);
+        setIsLoading(false);
+      } catch (e) {
+        toast(
+          "Something went wrong, please try to refresh the page or try again later",
+          { type: "error" }
+        );
+        console.log("error", e);
+      }
     }
     fetchData();
   }, [ipfs]);
@@ -79,11 +87,12 @@ const Mint = () => {
   }
 
   const [loading, setLoading] = useState(false);
+
   const [connectionError, setConnectionError] = useState(null);
   function handleMint(e) {
     e.preventDefault();
-    console.log(client?.contract);
-    if (client?.contract) {
+    console.log(artist?.contract);
+    if (artist?.contract) {
       mintNFT(client, ipfs);
     } else {
       console.log("no contract");
@@ -175,14 +184,13 @@ const Mint = () => {
   };
   return (
     <>
-      <ResponsiveAppBar artist={artist} setArtist={setArtist} />
-      {/*       <ToastContainer />
-       */}
       <LoadingOverlay
         active={isLoading}
         spinner
         text="Loading your NFT final version..."
       >
+        <ResponsiveAppBar artist={artist} setArtist={setArtist} />
+
         {
           <Box
             sx={{
@@ -242,8 +250,13 @@ const Mint = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  Client Address
-                  <Box className={{ display: "flex" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      alignContent: "space-around",
+                    }}
+                  >
                     <TextField
                       onChange={handleChangeClient}
                       required
@@ -252,23 +265,25 @@ const Mint = () => {
                       label="Client Address"
                       size="small"
                     />{" "}
+                    <LoadingButton
+                      onClick={(e) => handleMint(e)}
+                      type="submit"
+                      variant="contained"
+                      color="secondary"
+                      sx={{ margin: "4px" }}
+                      /*  loading={true} */
+                    >
+                      Mint
+                    </LoadingButton>{" "}
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="label"
+                    >
+                      {" "}
+                      <input hidden accept="image/*" type="file" />
+                    </IconButton>
                   </Box>
-                  <LoadingButton
-                    onClick={(e) => handleMint(e)}
-                    type="submit"
-                    variant="contained"
-                    color="secondary"
-                  >
-                    Mint
-                  </LoadingButton>{" "}
-                  <IconButton
-                    color="primary"
-                    aria-label="upload picture"
-                    component="label"
-                  >
-                    {" "}
-                    <input hidden accept="image/*" type="file" />
-                  </IconButton>
                 </CardActions>
               </Card>
             }
