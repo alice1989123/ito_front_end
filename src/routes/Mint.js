@@ -20,6 +20,23 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { BorderRightRounded } from "@mui/icons-material";
 
+const contracts = [
+  {
+    artist: "Alicia",
+    address: "0x9282396A80076D8f5a2FC3744b510D99BB524b1b",
+    contract: "0xde9FBDbf3f9daBBEDe31F5732f2766610E21d7A7",
+  },
+  {
+    artist: "Jaime",
+    address: "0xD9200de30243C294F193fC6f3F91634fA018F2d4",
+    contract: "0x88db134051ce3dfcf1b8544004c214175ce37aef",
+  },
+  {
+    artist: "Andres",
+    address: "0x0cBA69c8AF39cA43793A42a3221509323f9f5707",
+    contract: "0x9e0b3b44bfe1d7777ab0a8932a9cca7630041802",
+  },
+];
 const Mint = () => {
   const [CONFIG, SET_CONFIG] = useState({
     CONTRACT_ADDRESS: "",
@@ -87,20 +104,23 @@ const Mint = () => {
   }
 
   const [loading, setLoading] = useState(false);
+  const [loadingMint, setLoadingMint] = useState(false);
 
-  const [connectionError, setConnectionError] = useState(null);
   function handleMint(e) {
     e.preventDefault();
-    console.log(artist?.contract);
-    if (artist?.contract) {
-      mintNFT(client, ipfs);
+    const contract = contracts.filter((x) => {
+      return x.address.toLowerCase() === artist.toLowerCase();
+    })[0].contract;
+
+    if (contract) {
+      mintNFT(client, ipfs, contract);
     } else {
       console.log("no contract");
       toast("Please Loggin, with a validated account", { type: "error" });
     }
   }
 
-  const mintNFT = async (client, metadata) => {
+  const mintNFT = async (client, metadata, contract) => {
     const metadataURL = `ipfs://${metadata}`;
     let cost = CONFIG.WEI_COST;
     let gasLimit = CONFIG.GAS_LIMIT;
@@ -128,36 +148,33 @@ const Mint = () => {
           method: "net_version",
         });
 
-        //console.log(networkId, CONFIG.NETWORK.ID);
-
         if (networkId == CONFIG.NETWORK.ID) {
           //console.log("test");
-
+          console.log(metadataURL);
           const signer = await provider.getSigner();
 
-          setConnectionError("");
           try {
-            setLoading(true);
+            setLoadingMint(true);
 
             const Mintcontract2 = new ethers.Contract(
-              artist.contract,
+              contract,
               new ethers.utils.Interface(abi),
               signer
             );
 
-            let tx;
-            tx = await Mintcontract2.mint(client, metadataURL);
+            const tx = await Mintcontract2.mint(client, metadataURL);
 
-            setConnectionError(
-              "Your transaction has been submited it is now being proccesed"
+            const receipent = await tx.wait();
+            console.log(receipent);
+            setLoadingMint(false);
+            toast(
+              `Your transaaction has been succesfully sent with transaction hash ${receipent} `,
+              {
+                type: "success",
+              }
             );
-            setConnectionError("Your NFT has been minted! ");
-            setLoading(false);
           } catch (e) {
-            setConnectionError(
-              " Something when wrong when trying to mint, please try again later"
-            );
-            setLoading(false);
+            setLoadingMint(false);
 
             console.log("error.... ", e);
           }
@@ -271,7 +288,7 @@ const Mint = () => {
                       variant="contained"
                       color="secondary"
                       sx={{ margin: "4px" }}
-                      /*  loading={true} */
+                      loading={loadingMint}
                     >
                       Mint
                     </LoadingButton>{" "}

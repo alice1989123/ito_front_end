@@ -46,12 +46,15 @@ const LoggIn = ({ artist, setArtist }) => {
     getConfig();
   }, []);
 
-  const [contract, setContract] = useState(null);
+  useEffect(() => {
+    const itoAccount = localStorage.getItem("itoAccount");
+    console.log(itoAccount);
+    /*  if (itoAccount) {
+      setArtist(itoAccount);
+    } */
+  }, []);
 
-  const [account, setAccount] = useState("");
-  const [NFTsupply, setNFTsupply] = useState("");
   const [connectionError, setConnectionError] = useState("");
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -66,35 +69,7 @@ const LoggIn = ({ artist, setArtist }) => {
     setAnchorElUser(null);
   };
 
-  const contracts = [
-    {
-      artist: "Alicia",
-      address: "0x9282396A80076D8f5a2FC3744b510D99BB524b1b",
-      contract: "0xd3304ae95F09B605a8B1888cC995C13f436491f3",
-    },
-    {
-      artist: "Jaime",
-      address: "0xD9200de30243C294F193fC6f3F91634fA018F2d4",
-      contract: "0x88db134051ce3dfcf1b8544004c214175ce37aef",
-    },
-    {
-      artist: "Andress",
-      address: "0x0cBA69c8AF39cA43793A42a3221509323f9f5707",
-      contract: "0x4c364A276E5E8161978d7BB338B1Bdf610C2066c",
-    },
-  ];
-
   const connect = async () => {
-    const abiResponse = await fetch("/abi.json", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
-    const abi = await abiResponse.json();
-
-    const interface_ = new ethers.utils.Interface(abi);
-
     const metamaskIsInstalled = window.ethereum && window.ethereum.isMetaMask;
     const { ethereum } = window;
     if (metamaskIsInstalled) {
@@ -107,25 +82,18 @@ const LoggIn = ({ artist, setArtist }) => {
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           const accounts = await provider.send("eth_requestAccounts", []);
 
-          const selectedAcounts = contracts.filter((x) => {
-            return x.address.toLowerCase() == accounts[0].toLowerCase();
-          });
-          if (selectedAcounts.length >= 1) {
-            //console.log(selectedAcounts[0]);
-            setArtist(selectedAcounts[0]);
-            setContract(selectedAcounts[0].contract);
-            localStorage.setItem(
-              "itoAccount",
-              JSON.stringify(selectedAcounts[0])
-            );
-          }
+          //console.log(selectedAcounts[0]);
+          setArtist(accounts[0]);
+          localStorage.setItem("itoAccount", accounts[0]);
         } else
           toast("Please connect to the correct Network", { type: "error" });
       } catch (e) {
         console.log("error ", e);
       }
     } else {
-      setConnectionError(" Metmask is not installed, please install metamask");
+      toast(" Metmask is not installed, please install metamask", {
+        type: "error",
+      });
     }
   };
 
@@ -147,9 +115,7 @@ const LoggIn = ({ artist, setArtist }) => {
           <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
             <Typography sx={{ color: "white" }}>
               {artist
-                ? artist?.address.slice(0, 5) +
-                  "..." +
-                  artist?.address.slice(-5)
+                ? artist?.slice(0, 5) + "..." + artist?.slice(-5)
                 : "Connect Wallet"}
             </Typography>
             <Avatar alt="Remy Sharp" src="/images/wallet.png" />
