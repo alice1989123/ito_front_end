@@ -7,6 +7,7 @@ import Mint from "./routes/Mint";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ResponsiveAppBar from "./NavBar";
+import Landing from "./routes/Landing";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -16,6 +17,7 @@ root.render(
         <Route exact path="/" element={<App />} />
         <Route exact path="gallery" element={<Gallery />} />
         <Route exact path="mint/" element={<App />} />
+        <Route exact path="home/" element={<Landing />} />
 
         <Route exact path="/mint/:ipfs" element={<Mint />} />
         <Route
