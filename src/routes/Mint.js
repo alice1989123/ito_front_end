@@ -24,7 +24,7 @@ const contracts = [
   {
     artist: "Alicia",
     address: "0x9282396A80076D8f5a2FC3744b510D99BB524b1b",
-    contract: "0xde9FBDbf3f9daBBEDe31F5732f2766610E21d7A7",
+    contract: "0x5a676d3c7a476025ecd08c7903f3ede4383cd752",
   },
   {
     artist: "Jaime",
@@ -34,7 +34,7 @@ const contracts = [
   {
     artist: "Andres",
     address: "0x0cBA69c8AF39cA43793A42a3221509323f9f5707",
-    contract: "0x9e0b3b44bfe1d7777ab0a8932a9cca7630041802",
+    contract: "0x3eb13a0ba0b205eb1d1f2be34e7c513c9eaf3bfb",
   },
 ];
 const Mint = () => {
